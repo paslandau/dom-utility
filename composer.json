@@ -1,0 +1,32 @@
+{
+    "name": "paslandau/DomUtility",
+    "license": "MIT",
+    "description" : "Library to extend PHP core functions by common (missing) DOM functions",
+    "authors": [
+        {
+            "name": "Pascal Landau",
+            "email": "kontakt@myseosolution.de",
+            "homepage": "http://www.myseosolution.de",
+            "role": "Developer"
+        }
+    ],
+	"autoload": {
+	    "psr-4": {
+	        "paslandau\\DomUtility\\": "src/"
+	    }
+	},
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/paslandau/WebUtility.git"
+        }
+    ],
+    "require" : {
+        "php": "~5.5",
+        "paslandau/WebUtility": "~0"
+
+    },
+    "require-dev" : {
+        "phpunit/phpunit": "~3"
+    }
+}
