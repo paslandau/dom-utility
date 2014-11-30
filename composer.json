@@ -15,15 +15,11 @@
 	        "paslandau\\DomUtility\\": "src/"
 	    }
 	},
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/paslandau/web-utility.git"
-        }
-    ],
+    "repositories": [ { "type": "composer", "url": "http://packages.myseosolution.de/"} ],
+    "minimum-stability": "dev",
     "require" : {
         "php": "~5.5",
-        "paslandau/web-utility": "~0"
+        "paslandau/web-utility": "dev-master"
 
     },
     "require-dev" : {

@@ -19,14 +19,10 @@ The recommended way to install dom-utility is through [Composer](http://getcompo
 Next, update your project's composer.json file to include DomUtility:
 
     {
-        "repositories": [
-            {
-                "type": "git",
-                "url": "https://github.com/paslandau/dom-utility.git"
-            }
-        ],
+        "repositories": [ { "type": "composer", "url": "http://packages.myseosolution.de/"} ],
+        "minimum-stability": "dev",
         "require": {
-             "paslandau/dom-utility": "~0"
+             "paslandau/dom-utility": "dev-master"
         }
     }
 
