@@ -92,12 +92,27 @@ class DomConverter implements DomConverterInterface{
 		if($this->encodingConverter !== null){
             $encoding = $this->encodingConverter->getTargetEncoding();
 			$doc = new \DOMDocument(null,$encoding);
+            if (!@$doc->loadHTML('<?xml encoding="' . $encoding . '">' . $str)) {
+                throw new DocumentConversionException("Unable to transform given string into an HTML Document");
+            }
+            //todo remove this hack when http://stackoverflow.com/questions/27218460/how-to-upgrade-libxml2-on-travis-ci-build is solved
+            // dirty fix by http://php.net/manual/de/domdocument.loadhtml.php#95251
+            // needed because loadHTML will not recognize the encoding if no meta charset is defined
+            // and will ignore html5's <meta charset=".."> in libxml <2.8
+            foreach ($doc->childNodes as $item) {
+                if ($item->nodeType == XML_PI_NODE) {
+                    $doc->removeChild($item); // remove hack
+                }
+            }
+            $doc->encoding = $encoding; // insert proper
+
 		}else{
 			$doc = new \DOMDocument();
+            if(!@$doc->loadHTML($str)){
+                throw new DocumentConversionException("Unable to transform given string into an HTML Document");
+            }
 		}
-        if(!@$doc->loadHTML($str)){
-            throw new DocumentConversionException("Unable to transform given string into an HTML Document");
-        }
+
 		return $doc;
 	}
 	
