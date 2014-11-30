@@ -19,6 +19,7 @@
     "minimum-stability": "dev",
     "require" : {
         "php": "~5.5",
+        "lib-libxml": ">=2.9.1",
         "paslandau/web-utility": "dev-master"
 
     },

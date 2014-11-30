@@ -95,7 +95,6 @@ class DomConverter implements DomConverterInterface{
 		}else{
 			$doc = new \DOMDocument();
 		}
-        $doc->substituteEntities = false;
         if(!@$doc->loadHTML($str)){
             throw new DocumentConversionException("Unable to transform given string into an HTML Document");
         }
