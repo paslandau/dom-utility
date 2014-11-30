@@ -145,13 +145,14 @@ class DomConverterTest extends PHPUnit_Framework_TestCase {
 
                 $msg = [
                     "Error at $name for converter type {$converterType}:",
+                    "Internal encoding: ".mb_internal_encoding(),
                     "Input\n" . $data["input"] . "\n",
                     "Parsed Doc\n" . $parsedDoc . "\n",
                     "Excpected\n" . $expected . "\n",
                     "Actual\n" . $actual . "\n",
                 ];
                 $msg = implode("\n", $msg);
-//                echo $msg;
+                echo $msg;
                 $this->assertEquals($expected,$actual,$msg);
             }
         }
