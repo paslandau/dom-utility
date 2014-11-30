@@ -1,5 +1,5 @@
-#DomUtility
-[![Build Status](https://travis-ci.org/paslandau/DomUtility.svg?branch=master)](https://travis-ci.org/paslandau/DomUtility)
+#dom-utility
+[![Build Status](https://travis-ci.org/paslandau/dom-utility.svg?branch=master)](https://travis-ci.org/paslandau/dom-utility)
 
 Library to extend PHP core functions by common (missing) DOM functions
 
@@ -12,7 +12,7 @@ Library to extend PHP core functions by common (missing) DOM functions
 
 ##Installation
 
-The recommended way to install DomUtility is through [Composer](http://getcomposer.org/).
+The recommended way to install dom-utility is through [Composer](http://getcomposer.org/).
 
     curl -sS https://getcomposer.org/installer | php
 
@@ -22,11 +22,11 @@ Next, update your project's composer.json file to include DomUtility:
         "repositories": [
             {
                 "type": "git",
-                "url": "https://github.com/paslandau/DomUtility.git"
+                "url": "https://github.com/paslandau/dom-utility.git"
             }
         ],
         "require": {
-             "paslandau/DomUtility": "~0"
+             "paslandau/dom-utility": "~0"
         }
     }
 
