@@ -107,7 +107,7 @@ class DomConverter implements DomConverterInterface{
             $doc->encoding = $encoding; // insert proper
 
 		}else{
-			$doc = new \DOMDocument();
+            $doc = new \DOMDocument();
             if(!@$doc->loadHTML($str)){
                 throw new DocumentConversionException("Unable to transform given string into an HTML Document");
             }

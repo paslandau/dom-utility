@@ -16,7 +16,7 @@ class DomConverterTest extends PHPUnit_Framework_TestCase {
         "xml"
     ];
 
-    public function getResponseString($encoding,$type,$malformed){
+    public function getResponseString($encoding = null,$type,$malformed){
 
         mb_internal_encoding("utf-8");
 
@@ -29,20 +29,26 @@ class DomConverterTest extends PHPUnit_Framework_TestCase {
         $select = "<div id=\"foo\"><input type=\"hidden\" value=\"äöü\" /></div>";
         $content .= $select;
 
-        //todo: add test when no encoing info is provided
+        $meta = "";
         switch ($type) {
             case "html4" : {
-                $meta = "<meta http-equiv='content-type' content='text/html; charset={$encoding}'>";
+                if($encoding !== null) {
+                    $meta = "<meta http-equiv='content-type' content='text/html; charset={$encoding}'>";
+                }
                 $content = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"><html><head>{$meta}<title>Umlauts everywhere öäüßÖÄÜ</title>$malformedString</head><body>$content</body></html>";
                 break;
             }
             case "html5" : {
-                $meta = "<meta charset='{$encoding}'>";
+                if($encoding !== null) {
+                    $meta = "<meta charset='{$encoding}'>";
+                }
                 $content = "<!DOCTYPE html><html><head>{$meta}<title>Umlauts everywhere öäüßÖÄÜ</title>$malformedString</head><body>$content</body></html>";
                 break;
             }
             case "xml" : {
-                $meta = " encoding='{$encoding}'";
+                if($encoding !== null) {
+                    $meta = " encoding='{$encoding}'";
+                }
                 $content = "<?xml version='1.0'{$meta}?>$malformedString<foo><bar></bar>$content</foo>";
                 break;
             }
@@ -56,6 +62,9 @@ class DomConverterTest extends PHPUnit_Framework_TestCase {
 
 
     //todo: re-activate html5 tests when http://stackoverflow.com/questions/27218460/how-to-upgrade-libxml2-on-travis-ci-build is answered
+    // no-converter-tests will fail because DOMDocument does not recognize the html5 <meta charset=".."> element and assumes a default encoding
+    // which is probably ISO
+    // same goes for the no-encoding tests (in that case, even html4 fails because no encoding is set)
     public function test_convert(){
         $converter = new EncodingConverter("utf-8",true,true);
         $tidy = new TidyWrapper(new tidy());
@@ -77,6 +86,7 @@ class DomConverterTest extends PHPUnit_Framework_TestCase {
         $tests = [];
         $iso = "iso-8859-1";
         $utf8 = "utf-8";
+        $noEncoding = "no-encoding";
         $query = "//div[@id='foo']//input/@value";
         $expectedUtf8 = "äöü";
         $expectedIso = mb_convert_encoding("äöü",$iso,$utf8);
@@ -111,8 +121,26 @@ class DomConverterTest extends PHPUnit_Framework_TestCase {
             $tests["$type-malformed-$iso"] = [
                 "input" => $this->getResponseString($iso,$type,true),
                 "expected" => [
-                    "$type-no-converter-no-tidy" => $expectedUtf8, //$expectedIso, - loadHtml will get the encoding right even
-                    "$type-converter-no-tidy" => $expectedUtf8, //$expectedIso, - loadHtml will get the encoding right even
+                    "$type-no-converter-no-tidy" => $expectedUtf8, //$expectedIso, - loadHtml will get the encoding right
+                    "$type-converter-no-tidy" => $expectedUtf8, //$expectedIso, - loadHtml will get the encoding right
+//                    "$type-no-converter-tidy" => $expectedIso, // not specified
+                    "$type-converter-tidy" => $expectedUtf8,
+                ]
+            ];
+            $tests["$type-wellformed-$noEncoding"] = [
+                "input" => $this->getResponseString(null,$type,false),
+                "expected" => [
+//                    "$type-no-converter-no-tidy" => $expectedUtf8, // things will be messed up
+                    "$type-converter-no-tidy" => $expectedUtf8,
+//                    "$type-no-converter-tidy" => $expectedIso, // not specified
+                    "$type-converter-tidy" => $expectedUtf8,
+                ]
+            ];
+            $tests["$type-malformed-$noEncoding"] = [
+                "input" => $this->getResponseString(null,$type,true),
+                "expected" => [
+//                    "$type-no-converter-no-tidy" => $expectedUtf8, // things will be messed up
+                    "$type-converter-no-tidy" => $expectedUtf8,
 //                    "$type-no-converter-tidy" => $expectedIso, // not specified
                     "$type-converter-tidy" => $expectedUtf8,
                 ]
@@ -123,6 +151,8 @@ class DomConverterTest extends PHPUnit_Framework_TestCase {
         $tests["$type-malformed-$utf8"]["expected"]["$type-converter-no-tidy"] = DocumentConversionException::class;
         $tests["$type-malformed-$iso"]["expected"]["$type-no-converter-no-tidy"] = DocumentConversionException::class;
         $tests["$type-malformed-$iso"]["expected"]["$type-converter-no-tidy"] = DocumentConversionException::class;
+        $tests["$type-malformed-$noEncoding"]["expected"]["$type-no-converter-no-tidy"] = DocumentConversionException::class;
+        $tests["$type-malformed-$noEncoding"]["expected"]["$type-converter-no-tidy"] = DocumentConversionException::class;
 
         foreach($tests as $name => $data) {
             foreach($data["expected"] as $converterType => $expected){
@@ -135,7 +165,11 @@ class DomConverterTest extends PHPUnit_Framework_TestCase {
                 try {
                     /** @var DomConverterInterface $converter */
                     $doc = $converter->convert($data["input"]);
-                    $parsedDoc = $doc->saveXML();
+                    if(mb_substr($converterType,0,mb_strlen("xml") == "xml")){
+                        $parsedDoc = $doc->saveXML();
+                    }else{
+                        $parsedDoc = $doc->saveHTML();
+                    }
                     $xpath = new DOMXPath($doc);
 
                     $actual = "[NOT FOUND]";
@@ -157,7 +191,7 @@ class DomConverterTest extends PHPUnit_Framework_TestCase {
                     "Actual\n" . $actual . "\n",
                 ];
                 $msg = implode("\n", $msg);
-//                echo $msg;
+                echo $msg;
                 $this->assertEquals($expected,$actual,$msg);
             }
         }
