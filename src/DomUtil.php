@@ -62,7 +62,7 @@ class DomUtil{
 	public static function getInnerHtml(\DOMXPath $xpath, $query, $contextnode = null){
 		$nodes = $xpath->query($query, $contextnode);
 		if($nodes->length === 0){
-			throw new ElementNotFoundException();
+			throw new ElementNotFoundException("Could not find a matching node for xpath '$query'");
 		}
         return self::toString($nodes->item(0)->childNodes);
 	}
@@ -78,7 +78,7 @@ class DomUtil{
 	public static function getOuterHtml(\DOMXPath $xpath, $query, $contextnode = null){
         $nodes = $xpath->query($query, $contextnode);
         if($nodes->length === 0){
-            throw new ElementNotFoundException();
+            throw new ElementNotFoundException("Could not find a matching node for xpath '$query'");
         }
         return self::toString($nodes->item(0));
 	}
@@ -94,7 +94,7 @@ class DomUtil{
 	public static function getText(\DOMXPath $xpath, $query, $contextnode = null){
         $nodes = $xpath->query($query, $contextnode);
         if($nodes->length === 0){
-            throw new ElementNotFoundException();
+            throw new ElementNotFoundException("Could not find a matching node for xpath '$query'");
         }
         return $nodes->item(0)->textContent;
 	}

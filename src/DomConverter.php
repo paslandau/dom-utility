@@ -45,6 +45,9 @@ class DomConverter implements DomConverterInterface{
 	 */
 	public function convert($str){
         $encoding = null;
+        if($str === ""){
+            throw new DocumentConversionException("Unable to transform given string into a DomDocument");
+        }
         if($this->encodingConverter !== null){
             $headers = ["Content-Type" => "text/html"];
             if($this->domType === self::XML){

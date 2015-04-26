@@ -33,14 +33,14 @@ class DomConverterTest extends PHPUnit_Framework_TestCase {
         switch ($type) {
             case "html4" : {
                 if($encoding !== null) {
-                    $meta = "<meta http-equiv='content-type' content='text/html; charset={$encoding}'>";
+                    $meta = "<meta http-equiv='content-type' content='text/html; charset={$encoding}' />";
                 }
                 $content = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"><html><head>{$meta}<title>Umlauts everywhere öäüßÖÄÜ</title>$malformedString</head><body>$content</body></html>";
                 break;
             }
             case "html5" : {
                 if($encoding !== null) {
-                    $meta = "<meta charset='{$encoding}'>";
+                    $meta = "<meta charset='{$encoding}' />";
                 }
                 $content = "<!DOCTYPE html><html><head>{$meta}<title>Umlauts everywhere öäüßÖÄÜ</title>$malformedString</head><body>$content</body></html>";
                 break;
@@ -191,7 +191,7 @@ class DomConverterTest extends PHPUnit_Framework_TestCase {
                     "Actual\n" . $actual . "\n",
                 ];
                 $msg = implode("\n", $msg);
-                echo $msg;
+//                echo $msg;
                 $this->assertEquals($expected,$actual,$msg);
             }
         }
