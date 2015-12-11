@@ -2,8 +2,9 @@
 
 - docu
 
-#dev-master
+##0.8
 
+ - PHP 7
  - updated phpunit to ~4
  
 ###0.1.1
